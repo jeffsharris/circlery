@@ -7,7 +7,7 @@
 /*****************************************************************************/
 
 // Number of RGB LEDs in strand:
-int nLEDs = 160;
+int nLEDs = 312;
 
 // Chose 2 pins for output; can be any valid output pins:
 int dataPin  = 2;
@@ -35,10 +35,54 @@ void setup() {
 }
 
 void loop() {
+  rainbowCycleWave(0);
   colorChase(strip.Color(127,  0,  0), 100); // Red
   colorChase(strip.Color(  0,127,  0), 100); // Green
   colorChase(strip.Color(  0,  0,127), 100); // Blue
   colorChase(strip.Color(127,127,127), 100); // White
+}
+
+void rainbowCycleWave(uint8_t wait) {
+    uint16_t i, j;
+
+    for (j=0; j < 384 * 3; j++) {     // 5 cycles of all 384 colors in the wheel
+        for (i=0; i < nLEDs; i++) {
+            // tricky math! we use each pixel as a fraction of the full 384-color
+            // wheel (thats the i / strip.numPixels() part)
+            // Then add in j which makes the colors go around per pixel
+            // the % 384 is to make the wheel cycle around
+            strip.setPixelColor(i, Wheel(((i * 384 / nLEDs) + j) % 384));
+        }
+        strip.show();   // write all the pixels out
+        delay(wait);
+    }
+}
+
+//Input a value 0 to 384 to get a color value.
+//The colours are a transition r - g - b - back to r
+
+uint32_t Wheel(uint16_t WheelPos)
+{
+    byte r, g, b;
+    switch(WheelPos / 128)
+    {
+        case 0:
+            r = 127 - WheelPos % 128; // red down
+            g = WheelPos % 128;       // green up
+            b = 0;                    // blue off
+            break;
+        case 1:
+            g = 127 - WheelPos % 128; // green down
+            b = WheelPos % 128;       // blue up
+            r = 0;                    // red off
+            break;
+        case 2:
+            b = 127 - WheelPos % 128; // blue down
+            r = WheelPos % 128;       // red up
+            g = 0;                    // green off
+            break;
+    }
+    return(strip.Color(r, g, b));
 }
 
 // Chase one dot down the full strip.  Good for testing purposes.
