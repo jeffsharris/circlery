@@ -36,10 +36,6 @@ void setup() {
 
 void loop() {
   rainbowCycleWave(0);
-  colorChase(strip.Color(127,  0,  0), 100); // Red
-  colorChase(strip.Color(  0,127,  0), 100); // Green
-  colorChase(strip.Color(  0,  0,127), 100); // Blue
-  colorChase(strip.Color(127,127,127), 100); // White
 }
 
 void rainbowCycleWave(uint8_t wait) {
