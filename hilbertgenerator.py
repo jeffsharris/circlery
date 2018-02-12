@@ -20,15 +20,20 @@ def point_to_hilbert(x, y, order=dimension):
     position |= quad_position
   return position
 
-output = "{\n"
+def generateHilbertString():
+	output = "{\n"
+
+	for x in range(0,2 ** dimension):
+		output += "{"
+		for y in range(0,2 ** dimension):
+			output += str(point_to_hilbert(x, y)) + ","
+		output = output[:-1] + "},\n"
+
+	output = output[:-2]		
+	output += "\n};"
+	
+	return output
 
 for x in range(0,2 ** dimension):
-	output += "{"
 	for y in range(0,2 ** dimension):
-		output += str(point_to_hilbert(x, y)) + ","
-	output = output[:-1] + "},\n"
-	
-output = output[:-2]		
-output += "\n};"
-
-print output
+		print(str(point_to_hilbert(x, y)))
