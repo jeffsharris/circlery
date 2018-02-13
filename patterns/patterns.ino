@@ -70,7 +70,6 @@ uint32_t correctColor(byte r, byte g, byte b) {
 }
 
 void setup() {
-  Serial.begin(9600);
   // Start up the LED strip
   strip.begin();
 
@@ -82,7 +81,7 @@ void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint8_t wait);
 
 void loop() {
   uint8_t nLoops = 30;
-  uint16_t wait = 50;
+  uint16_t wait = 100;
   displayPixels(lotusflower, nLoops, wait);
 }
 
@@ -92,18 +91,14 @@ void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint16_t wait) {
     uint16_t pixelOffset;
 
     for (startingLocation = 0; startingLocation < N_PIXELS; startingLocation++) {
-      Serial.println(startingLocation);
       for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
         strip.setPixelColor(pixelOffset, correctColor(pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][0])),
                                                       pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][1])),
                                                       pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][2]))
                                                       ));
-        if((startingLocation+pixelOffset) % 5 == 0) {
-          strip.show();
-          delay(wait);
-        }
-      
       }
+      strip.show();
+      delay(wait);
     }    
   }
 }
