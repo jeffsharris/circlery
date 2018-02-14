@@ -82,7 +82,8 @@ void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint8_t wait);
 void loop() {
   uint8_t nLoops = 30;
   uint16_t wait = 100;
-  displayPixels(lotusflower, nLoops, wait);
+  displayPixels(cow, nLoops, wait);
+  //constantColors();
 }
 
 void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint16_t wait) {
@@ -93,8 +94,8 @@ void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint16_t wait) {
     for (startingLocation = 0; startingLocation < N_PIXELS; startingLocation++) {
       for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
         strip.setPixelColor(pixelOffset, correctColor(pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][0])),
-                                                      pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][1])),
-                                                      pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][2]))
+                                                      pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][2])),
+                                                      pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][1]))
                                                       ));
       }
       strip.show();
@@ -103,5 +104,44 @@ void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint16_t wait) {
   }
 }
 
+void constantColors() {
+  uint16_t pixelOffset;
+  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, correctColor(127, 0, 0));
+  } 
+          strip.show();
+  delay(5000); 
+  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, strip.Color(127, 0, 0));
+  }
+        strip.show();
+  delay(5000);  
+  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, correctColor(0, 127, 0));
+  }
+        strip.show();
+  delay(5000);
+ for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, strip.Color(0, 127, 0));
+  }
+          strip.show();
+  delay(5000);
+  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, correctColor(0, 0, 127));
+  }
+          strip.show();
+  delay(5000);
+   for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
+    strip.setPixelColor(pixelOffset, strip.Color(0, 0, 127));
+  }
+        strip.show();
+  delay(5000); 
+
+
+
+
+ 
+  
+}
 
 
