@@ -13,7 +13,7 @@
 #define N_PIXELS      1024 // Number of pixels in the inputted image
 
 // The multiple used to calculate the interpolation (e.g. 0.2 = 1/0.2 = 5 interpolation steps)
-#define INTERPOLATION_MULTIPLE      0.25
+#define INTERPOLATION_MULTIPLE      0.5
 
 // The multiple used to calculate the interpolation between two photos
 #define TRANSITION_MULTIPLE     0.05
@@ -128,19 +128,19 @@ void transitionPhotos(uint8_t currentImage[][3], uint8_t nextImage[][3]) {
   uint16_t pixelOffset;
   for (currentStep = 0; currentStep * TRANSITION_MULTIPLE < 1; currentStep++) {
     for(pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-      byte r = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[pixelOffset][0])), 
-                                           pgm_read_byte(&(nextImage[pixelOffset][0])),
-                                           currentStep,
-                                           TRANSITION_MULTIPLE);
-      byte g = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[pixelOffset][2])), 
-                                           pgm_read_byte(&(nextImage[pixelOffset][2])),
-                                           currentStep,
-                                           TRANSITION_MULTIPLE);
-      byte b = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[pixelOffset][1])), 
-                                           pgm_read_byte(&(nextImage[pixelOffset][1])),
-                                           currentStep,
-                                           TRANSITION_MULTIPLE);
-      strip.setPixelColor(pixelOffset, strip.Color(r, g, b));
+      byte r = pgm_read_byte(&(currentImage[pixelOffset][0]));
+      byte r_prime = pgm_read_byte(&(nextImage[pixelOffset][0]));          
+      byte r_final = interpolateAndCorrectColors(r, r_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+      byte g = pgm_read_byte(&(currentImage[pixelOffset][2]));
+      byte g_prime = pgm_read_byte(&(nextImage[pixelOffset][2]));          
+      byte g_final = interpolateAndCorrectColors(g, g_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+      byte b = pgm_read_byte(&(currentImage[pixelOffset][1]));
+      byte b_prime = pgm_read_byte(&(nextImage[pixelOffset][1]));          
+      byte b_final = interpolateAndCorrectColors(b, b_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+      strip.setPixelColor(pixelOffset, strip.Color(r_final, g_final, b_final));
     }
     strip.show();      
     delay(WAIT);   
@@ -169,22 +169,22 @@ void pixelIterator(uint8_t currentImage[][3]) {
           byte b_prime = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][1]));          
           byte b_final = interpolateAndCorrectColors(b, b_prime, currentStep, INTERPOLATION_MULTIPLE);
 
-          if (r_final + g_final + b_final == 0) {
-            if (r >= g) {
-              if (r >= b) {
-                r_final = 0;
-              } else {
-                b_final = 0;
-              }
-            } else {
-              if (g >= b) {
-                g_final = 0;
-              } else {
-                b_final = 0;
-              }
-            }
-          }
-          strip.setPixelColor(pixelOffset, strip.Color(r, g, b));
+//          if (r_final + g_final + b_final == 0) {
+//            if (r >= g) {
+//              if (r >= b) {
+//                r_final = 0;
+//              } else {
+//                b_final = 0;
+//              }
+//            } else {
+//              if (g >= b) {
+//                g_final = 0;
+//              } else {
+//                b_final = 0;
+//              }
+//            }
+//          }
+          strip.setPixelColor(pixelOffset, strip.Color(r_final, g_final, b_final));
         }
         strip.show();      
         delay(WAIT);
