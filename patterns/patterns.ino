@@ -13,10 +13,10 @@
 #define N_PIXELS      1024 // Number of pixels in the inputted image
 
 // The multiple used to calculate the interpolation (e.g. 0.2 = 1/0.2 = 5 interpolation steps)
-#define INTERPOLATION_MULTIPLE      0.5
+#define INTERPOLATION_MULTIPLE      0.25
 
 // The multiple used to calculate the interpolation between two photos
-#define TRANSITION_MULTIPLE     0.1
+#define TRANSITION_MULTIPLE     0.05
 
 // The number of times to cycle through each image
 #define LOOPS_PER_IMAGE 1
@@ -93,6 +93,7 @@ void setup() {
 void displayPixels(uint8_t currentImage[][3], uint8_t nLoops, uint8_t wait);
 
 void loop() {
+  pixelIterator(chihuly);
   pixelIterator(lotusflower);
   Serial.println("Palm trees");
   transitionPhotos(lotusflower, palmtrees);
@@ -156,18 +157,33 @@ void pixelIterator(uint8_t currentImage[][3]) {
           Serial.println(startingLocation);
       for (currentStep = 0; currentStep * INTERPOLATION_MULTIPLE < 1; currentStep++) {
         for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-          byte r = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][0])), 
-                                     pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][0])),
-                                     currentStep,
-                                     INTERPOLATION_MULTIPLE);
-          byte g = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][2])), 
-                                     pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][2])),
-                                     currentStep,
-                                     INTERPOLATION_MULTIPLE);
-          byte b = interpolateAndCorrectColors(pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][1])), 
-                                     pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][1])),
-                                     currentStep,
-                                     INTERPOLATION_MULTIPLE);
+          byte r = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][0]));
+          byte r_prime = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][0]));          
+          byte r_final = interpolateAndCorrectColors(r, r_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+          byte g = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][2]));
+          byte g_prime = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][2]));          
+          byte g_final = interpolateAndCorrectColors(g, g_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+          byte b = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset) % N_PIXELS][1]));
+          byte b_prime = pgm_read_byte(&(currentImage[(startingLocation+pixelOffset+1) % N_PIXELS][1]));          
+          byte b_final = interpolateAndCorrectColors(b, b_prime, currentStep, INTERPOLATION_MULTIPLE);
+
+          if (r_final + g_final + b_final == 0) {
+            if (r >= g) {
+              if (r >= b) {
+                r_final = 0;
+              } else {
+                b_final = 0;
+              }
+            } else {
+              if (g >= b) {
+                g_final = 0;
+              } else {
+                b_final = 0;
+              }
+            }
+          }
           strip.setPixelColor(pixelOffset, strip.Color(r, g, b));
         }
         strip.show();      
@@ -182,46 +198,3 @@ byte interpolateAndCorrectColors(byte firstColor, byte secondColor, uint8_t curr
   float cumulative = pgm_read_byte(&gamma[firstColor]) + (pgm_read_byte(&gamma[secondColor]) - pgm_read_byte(&gamma[firstColor])) * interpolationMultiple * currentStep;
   return (byte) round(cumulative);
 }
-
-
-void constantColors() {
-  uint16_t pixelOffset;
-  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, correctColor(127, 0, 0));
-  } 
-          strip.show();
-  delay(5000); 
-  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, strip.Color(127, 0, 0));
-  }
-        strip.show();
-  delay(5000);  
-  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, correctColor(0, 127, 0));
-  }
-        strip.show();
-  delay(5000);
- for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, strip.Color(0, 127, 0));
-  }
-          strip.show();
-  delay(5000);
-  for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, correctColor(0, 0, 127));
-  }
-          strip.show();
-  delay(5000);
-   for (pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    strip.setPixelColor(pixelOffset, strip.Color(0, 0, 127));
-  }
-        strip.show();
-  delay(5000); 
-
-
-
-
- 
-  
-}
-
-
