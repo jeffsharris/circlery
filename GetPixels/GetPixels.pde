@@ -3,6 +3,7 @@ int halfImage;
 color[] pixelholder;
 boolean flipped = false;
 PrintWriter output;
+String filename = "alinea";
 
 int side = 32;
 int numpixels = side * side;
@@ -10,7 +11,7 @@ int numpixels = side * side;
 int[] hilbert = new int[numpixels];
 
 //0 = RBG, 1 = HSB
-int mode = 0;
+int mode = 1;
 
 void setup() {
   if (mode ==0){
@@ -21,7 +22,7 @@ void setup() {
   }
   
   surface.setSize(side, side);
-  myImage = loadImage("10.jpg");
+  myImage = loadImage("circlery/"+filename+".jpg");
   myImage.loadPixels();
   
   pixelholder = new color[numpixels];
@@ -58,7 +59,7 @@ void setup() {
   printArray("blue", flipped);
   */
   
-  printHilbert("campsauceRGB.txt", 1);
+  printHilbert("output/"+filename+".txt", 1);
 }
 
 void draw() {
