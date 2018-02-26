@@ -22,7 +22,7 @@ void setup() {
   }
   
   surface.setSize(side, side);
-  myImage = loadImage("circlery/"+filename+".jpg");
+  myImage = loadImage("images/"+filename+".jpg");
   myImage.loadPixels();
   
   pixelholder = new color[numpixels];
@@ -45,7 +45,7 @@ void setup() {
     }
   }  
   
-  String[] lines = loadStrings("32hilbert.txt");
+  String[] lines = loadStrings("hilbert/32hilbert.txt");
   
   //populate with array from text file
   for (int i =0; i< numpixels; i++){
