@@ -13,13 +13,13 @@
 #define N_PIXELS                    1024 // Number of pixels in the inputted image
 
 // The number of images
-#define N_PHOTOS                    2
+#define N_PHOTOS                    19
 
 // The increment used for each interpolation step. Must be > 0, < 255
 #define INTERPOLATION_INCREMENT         32
 
 // The increment used for fading between one photo and another
-#define TRANSITION_INCREMENT            25
+#define TRANSITION_INCREMENT            12
 
 // The number of times to cycle through each image
 #define LOOPS_PER_IMAGE             1
@@ -65,19 +65,32 @@ photo_values_matrix sutro PROGMEM = {{160,255,82},{159,251,84},{157,252,96},{159
 
 const photo_values_matrix *photos[] = {&alinea,&balloon,&bloodbath,&bmsunrise,&cereal,&duck,&easterlaika,&fireworks,&flowerjeffshump,&flowerpantjeff,&gidmijwedding,&icelandonesies,&laikalake,&pinknyc,&reflectionlaika,&riseshump,&smallsauce,&sophchella,&sutro};
 
+String photo_names[N_PHOTOS] = {"alinea", "balloon", "bloodbath", "bmsunrise", "cereal", "duck", "easterlaika", "fireworks", "flowerjeffshump", "gidmijwedding", "icelandonesies", "laikalake", "pinknyc", "reflectionlaika", "riseshump", "smallsauce", "sophchella", "sutro"};
 
 // Create the array of LEDs
 CRGB leds[N_LEDS];
 
+// N_PHOTOS is always larger than the random number we'll generate next
+uint8_t lastPhoto = N_PHOTOS;
 
 void setup() {
   Serial.begin(9600); 
+  randomSeed(analogRead(0));
   FastLED.addLeds<LPD8806, DATA_PIN, CLOCK_PIN, COLOR_ORDER>(leds, N_LEDS).setCorrection( TypicalLEDStrip ).setTemperature(  UncorrectedTemperature );
   FastLED.setBrightness(  BRIGHTNESS );
 }
 
 void loop() {
-  pixelIterator(*photos[8]);
+  uint8_t thisPhoto = random(N_PHOTOS);
+  while(thisPhoto == lastPhoto) {
+    thisPhoto = random(N_PHOTOS);
+  }
+  if (lastPhoto != N_PHOTOS) {
+    transitionPhotos(*photos[lastPhoto], *photos[thisPhoto]);
+  }
+  Serial.println(photo_names[thisPhoto]);
+  pixelIterator(*photos[thisPhoto]);
+  lastPhoto = thisPhoto;
 }
 
 
