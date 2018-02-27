@@ -19,13 +19,10 @@
 #define INTERPOLATION_INCREMENT         32
 
 // The increment used for fading between one photo and another
-#define TRANSITION_INCREMENT            12
+#define TRANSITION_INCREMENT            5
 
 // The number of times to cycle through each image
 #define LOOPS_PER_IMAGE             1
-
-// The number of pixels to average on each side of the current pixel
-#define PIXELS_TO_AVERAGE          1
 
 // The speed of the sculpture
 #define WAIT                        50
@@ -113,14 +110,6 @@ void transitionPhotos(uint8_t currentImage[][3], uint8_t nextImage[][3]) {
     FastLED.show();      
     FastLED.delay(WAIT);   
   }
-}
-
-void solidColor() {
-  for (uint16_t pixelOffset = 0; pixelOffset < N_LEDS; pixelOffset++) {
-    leds[pixelOffset] = CRGB(70, 255, 0);
-  }
-  FastLED.show();
-  FastLED.delay(100000); 
 }
 
 void pixelIterator(uint8_t currentImage[][3]) {
