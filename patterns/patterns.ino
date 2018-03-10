@@ -16,7 +16,7 @@
 #define N_PHOTOS                    18
 
 // The increment used for each interpolation step. Must be > 0, < 255
-#define INTERPOLATION_INCREMENT         64
+#define INTERPOLATION_INCREMENT         32
 
 // The increment used for fading between one photo and another
 #define TRANSITION_INCREMENT            5
