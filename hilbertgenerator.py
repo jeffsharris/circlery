@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import numpy as np
+
 dimension = 7
 
 hilbert_map = {
@@ -34,6 +34,7 @@ def generateHilbertString():
 	
 	return output
 
-for x in range(0,2 ** dimension):
-	for y in range(0,2 ** dimension):
-		print(str(point_to_hilbert(x, y)))
+if __name__ == "__main__":
+    for x in range(0, 2 ** dimension):
+        for y in range(0, 2 ** dimension):
+            print(str(point_to_hilbert(x, y)))
